@@ -22,6 +22,6 @@ final class UploadFile extends FileEvent {
   final FileModel file;
 
   UploadFile({
-    required this.file,
+    required this.file, required ,
   });
 }

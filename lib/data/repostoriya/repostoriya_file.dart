@@ -4,7 +4,7 @@ class FileRepository {
   final List<FileModel> _files = [
     FileModel(
       id: 1,
-      title: "Harry Potter and the Deathly Hallows",
+      title: "Harry Potter",
       description: """The two men appeared out of nowhere, a few yards apart
 in the narrow, moonlit lane. For a second they stood
 quite still, wands directed at each other’s chests; then,
@@ -19,7 +19,7 @@ recognizing each other, they stowed their wands beneath their cloaks and started
     ),
     FileModel(
       id: 2,
-      title: "To Kill a Mockingbird PDF",
+      title: "To Kill a Mockingbir",
       description:
           """When he was nearly thirteen, my brother Jem got his arm badly
 broke at the elbow. When it healed, and Jem's fears of
