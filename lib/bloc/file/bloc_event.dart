@@ -22,6 +22,13 @@ final class UploadFile extends FileEvent {
   final FileModel file;
 
   UploadFile({
-    required this.file, required ,
+    required this.file,
+    required,
   });
+}
+
+class SearchFiles extends FileEvent {
+  final String query;
+
+  SearchFiles(this.query);
 }

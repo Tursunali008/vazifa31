@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vazifa31/bloc/file/bloc_event.dart';
 import 'package:vazifa31/bloc/file/bloc_file.dart';
 import 'package:vazifa31/bloc/file/bloc_state.dart';
+import 'package:vazifa31/ui/screen/book_info.dart';
 import 'package:vazifa31/ui/widgets/book_widget.dart';
 import 'package:vazifa31/ui/widgets/carusel.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
@@ -18,22 +19,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
-  @override
-  void initState() {
-    super.initState();
-    _searchController.addListener(_onSearchChanged);
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
   void _onSearchChanged() {
-    setState(() {
-      _searchQuery = _searchController.text;
-    });
+    final searchQuery = _searchController.text;
+    context.read<FileBloc>().add(SearchFiles(searchQuery));
   }
 
   @override
@@ -107,15 +95,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.only(
                     left: 20, right: 20, top: 5, bottom: 10),
                 sliver: SliverToBoxAdapter(
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(27),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(27),
+                        ),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.only(right: 20),
+                          child: IconButton(
+                              onPressed: _onSearchChanged,
+                              icon: Icon(Icons.search_sharp,
+                                  color: Colors.grey.shade600)),
+                        ),
+                        hintText: "Search book",
+                        hintStyle: TextStyle(color: Colors.grey.shade600),
                       ),
-                      prefixIcon: Icon(Icons.search_sharp, color: Colors.grey.shade600),
-                      hintText: "Search book",
-                      hintStyle: TextStyle(color: Colors.grey.shade600),
                     ),
                   ),
                 ),
@@ -153,20 +150,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   (ctx, index) {
                     final file = filteredFiles[index];
                     return Card(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
                               height: 70,
                               width: double.infinity,
-                              child: Image.network(file.image, fit: BoxFit.cover),
+                              child:
+                                  Image.network(file.image, fit: BoxFit.cover),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
+                            Row(
                               children: [
                                 Expanded(
                                   child: Text(
@@ -185,9 +180,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ],
                             ),
-                          ),
-                          const SizedBox(height: 13),
-                        ],
+                            Row(
+                              children: [
+                                Text(
+                                  "Price: ${file.price}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Spacer(),
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            BooksInfoScreen(index: index),
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(
+                                      Icons.arrow_circle_right_outlined),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -195,8 +213,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 10.0,
-                  mainAxisSpacing: 10.0,
+                  crossAxisSpacing: 5.0,
+                  mainAxisSpacing: 5.0,
                 ),
               ),
             ],

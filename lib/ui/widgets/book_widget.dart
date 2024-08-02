@@ -112,7 +112,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
             autoPlay: true,
             autoPlayAnimationDuration: const Duration(milliseconds: 1500),
             enableInfiniteScroll: true,
-            viewportFraction: 0.8, // Adjusted to fit content better
+            viewportFraction: 0.8,
             enlargeCenterPage: true,
           ),
         );

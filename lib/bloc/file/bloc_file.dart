@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
@@ -20,11 +22,13 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     on<DownloadFile>(_onDownloadFile);
     on<OpenFile>(_onOpenFile);
     on<UploadFile>(_onUploadFile);
+    on<SearchFiles>(
+        _onSearchFiles); // Fixed: Added event handler for SearchFiles
   }
 
   final FileRepository fileRepository;
 
-  void _onGetFiles(event, emit) async {
+  void _onGetFiles(GetFiles event, Emitter<FileState> emit) async {
     emit(state.copyWith(status: FileStatus.loading));
 
     try {
@@ -52,7 +56,19 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     }
   }
 
-  void _onDownloadFile(DownloadFile event, emit) async {
+  void _onSearchFiles(SearchFiles event, Emitter<FileState> emit) {
+    final query = event.query.toLowerCase();
+    final filteredFiles = state.files?.where((file) {
+      return file.title.toLowerCase().contains(query);
+    }).toList();
+
+    emit(state.copyWith(
+      status: FileStatus.loaded,
+      files: filteredFiles,
+    ));
+  }
+
+  void _onDownloadFile(DownloadFile event, Emitter<FileState> emit) async {
     final index = state.files!.indexWhere((file) {
       return file.id == event.file.id;
     });
@@ -76,6 +92,8 @@ class FileBloc extends Bloc<FileEvent, FileState> {
           },
         );
 
+        // ignore: duplicate_ignore
+        // ignore: avoid_print
         print(response);
 
         state.files![index].isDownloaded = true;
@@ -103,7 +121,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     }
   }
 
-  void _onUploadFile(UploadFile event, emit) async {
+  void _onUploadFile(UploadFile event, Emitter<FileState> emit) async {
     try {
       final dio = Dio();
       final file = File(event.file.saveUrl);
@@ -132,7 +150,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     }
   }
 
-  Future<void> _onOpenFile(OpenFile event, emit) async {
+  Future<void> _onOpenFile(OpenFile event, Emitter<FileState> emit) async {
     await OpenFilex.open(event.filePath);
   }
 
